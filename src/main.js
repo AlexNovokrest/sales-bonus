@@ -1,3 +1,4 @@
+
 function calculateSimpleRevenue(purchase, product) {
     const item = purchase.items.find(i => i.sku === product.sku);
     if (!item) return 0;
@@ -98,8 +99,4 @@ function analyzeSalesData(data, options = {}) {
         sellerStat.top_products = products.slice(0, 10);
 
         sellerStat.revenue = Math.round(sellerStat.revenue);
-        sellerStat.profit = Math.round(sellerStat.profit);
-    });
-
-    return sellersArray;
-}
+        sellerStat.profit
