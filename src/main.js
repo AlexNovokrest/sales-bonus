@@ -81,9 +81,18 @@ function analyzeSalesData(data, options) {
             // Расчет себестоимости
             const cost = product.purchase_price * item.quantity;
             // Расчет выручки для товара с учетом скидки
-            const revenue = calculateRevenue(record, product);
+             let revenue = 0;
+            if (typeof calculateRevenue === 'function') {
+                revenue = calculateRevenue(record, product);
+                if (typeof revenue !== 'number' || isNaN(revenue)) {
+                    revenue = 0;
+                }
+            }
             // Расчет прибыли
             const profit = revenue - cost;
+            if (typeof seller.profit !== 'number' || isNaN(seller.profit)) {
+                seller.profit = 0;
+            }
             // Обновляем прибыль продавца
             seller.profit += profit;
             // Учет количества проданных товаров
@@ -96,16 +105,22 @@ function analyzeSalesData(data, options) {
     // @TODO: Сортировка продавцов по прибыли
     sellerStats.sort((a, b) => b.profit - a.profit);
     // @TODO: Назначение премий на основе ранжирования
-sellerStats.forEach((seller, index) => {
-    // Расчет бонуса на основе ранжирования
-    seller.bonus = +calculateBonus(index, sellerStats.length, seller).toFixed(2);
-    // Расчет бонуса
-      const topProducts = Object.entries(seller.products_sold)
-        .map(([sku, quantity]) => ({ sku, quantity }))
-        .sort((a, b) => b.quantity - a.quantity)
-        .slice(0, 10);
+     sellerStats.forEach((seller, index) => {
+        let bonusValue = 0;
+        if (typeof calculateBonus === 'function') {
+            bonusValue = calculateBonus(index, sellerStats.length, seller);
+            if (typeof bonusValue !== 'number' || isNaN(bonusValue)) {
+                bonusValue = 0;
+            }
+        }
+        seller.bonus = +bonusValue.toFixed(2);
+
+        const topProducts = Object.entries(seller.products_sold)
+            .map(([sku, quantity]) => ({ sku, quantity }))
+            .sort((a, b) => b.quantity - a.quantity)
+            .slice(0, 10);
         seller.top_products = topProducts;
-});
+    });
     // // @TODO: Подготовка итоговой коллекции с нужными полями
     return sellerStats.map(seller => ({
     seller_id: seller.id,
