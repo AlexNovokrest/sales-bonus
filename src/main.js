@@ -103,13 +103,13 @@ function analyzeSalesData(data, options) {
         });
     });
     // @TODO: Сортировка продавцов по прибыли
-    sellerStats.sort((a, b) => b.profit - a.profit);
+    sellerStats.sort((a, b) => a.profit - b.profit);
     // @TODO: Назначение премий на основе ранжирования
      sellerStats.forEach((seller, index) => {
         let bonusValue = 0;
         if (typeof calculateBonus === 'function') {
             bonusValue = calculateBonus(index, sellerStats.length, seller);
-            if (typeof bonusValue !== 'number' || isNaN(bonusValue)) {
+            if (typeof bonusValue !== 'number' || isNaN(bonusValue) || bonusValue < 0) {
                 bonusValue = 0;
             }
         }
