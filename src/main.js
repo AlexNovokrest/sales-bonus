@@ -44,6 +44,12 @@ function analyzeSalesData(data, options) {
     if (!options || typeof options !== 'object') {
         throw new Error('Опции должны быть объектом');
     }
+    if (!data.products || !Array.isArray(data.products) || data.products.length === 0) {
+        throw new Error('Некорректные входные данные: отсутствуют продукты');
+    }
+    if (!data.purchase_records || !Array.isArray(data.purchase_records) || data.purchase_records.length === 0) {
+        throw new Error('Некорректные входные данные: отсутствуют записи покупок');
+    }
     const { calculateRevenue, calculateBonus } = options;
     // @TODO: Подготовка промежуточных данных для сбора статистики
     const sellerStats = data.sellers.map(seller => ({
